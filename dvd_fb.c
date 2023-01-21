@@ -94,11 +94,37 @@ h_sigint(int sig)
 	exit(1);
 }
 
+static void
+usage(void)
+{
+	puts("usage: dvd_fb [-hv]");
+	exit(0);
+}
+
+static void
+version(void)
+{
+	puts("dvd_fb version "VERSION);
+	exit(0);
+}
+
 int
-main(void)
+main(int argc, char **argv)
 {
 	int x, y, w, h, xdir, ydir;
 	uint32_t color;
+
+	while (++argv, --argc > 0) {
+		if ((*argv)[0] == '-' && (*argv)[1] != '\0' && (*argv)[2] == '\0') {
+			switch ((*argv)[1]) {
+				case 'h': usage(); break;
+				case 'v': version(); break;
+				default: die("invalid option %s", *argv); break;
+			}
+		} else {
+			die("unexpected argument: %s", *argv);
+		}
+	}
 
 	if (atexit(h_exit) != 0)
 		die("atexit: failed to set exit handler");
