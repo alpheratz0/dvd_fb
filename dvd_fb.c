@@ -53,10 +53,6 @@ die(const char *fmt, ...)
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fputc('\n', stderr);
-
-	if (fb_acquired)
-		tfb_release_fb();
-
 	exit(1);
 }
 
@@ -85,11 +81,16 @@ draw_dvd_logo(int x, int y, uint32_t color)
 }
 
 static void
+h_exit(void)
+{
+	if (fb_acquired)
+		tfb_release_fb();
+}
+
+static void
 h_sigint(int sig)
 {
 	(void) sig;
-	if (fb_acquired)
-		tfb_release_fb();
 	exit(1);
 }
 
@@ -98,6 +99,9 @@ main(void)
 {
 	int x, y, w, h, xdir, ydir;
 	uint32_t color;
+
+	if (atexit(h_exit) != 0)
+		die("atexit: failed to set exit handler");
 
 	if (tfb_acquire_fb(0, NULL, NULL) != TFB_SUCCESS)
 		die("couldn't acquire framebuffer");
