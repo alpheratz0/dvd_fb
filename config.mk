@@ -7,4 +7,3 @@ LDLIBS    = -ltfb
 LDFLAGS   = -s
 
 PREFIX    = /usr/local
-MANPREFIX = $(PREFIX)/share/man
