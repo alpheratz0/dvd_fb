@@ -1,5 +1,5 @@
 .POSIX:
-.PHONY: all install uninstall
+.PHONY: all clean install uninstall
 
 include config.mk
 
