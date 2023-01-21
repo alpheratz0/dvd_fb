@@ -1,7 +1,7 @@
 #define DVD_LOGO_WIDTH  (80)
 #define DVD_LOGO_HEIGHT (48)
 
-const uint32_t dvd_logo_alpha[DVD_LOGO_WIDTH * DVD_LOGO_HEIGHT] = {
+const uint8_t dvd_logo_alpha[DVD_LOGO_WIDTH * DVD_LOGO_HEIGHT] = {
 	/* (y:  0, x:  0) */ 0x00, 0x00, 0x00, 0x00, 0x00,
 	/* (y:  0, x:  5) */ 0x00, 0x44, 0xe5, 0xec, 0xec,
 	/* (y:  0, x: 10) */ 0xec, 0xec, 0xec, 0xec, 0xec,
