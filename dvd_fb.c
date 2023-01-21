@@ -118,7 +118,7 @@ main(void)
 
 	tfb_clear_screen(0x000000);
 
-	while (1) {
+	for (;;) {
 		tfb_draw_rect(x, y, DVD_LOGO_WIDTH, DVD_LOGO_HEIGHT, 0x000000);
 
 		if ((x += xdir) % (w - DVD_LOGO_WIDTH) == 0)
