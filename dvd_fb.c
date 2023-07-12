@@ -1,17 +1,18 @@
 /*
 	Copyright (C) 2023 <alpheratz99@protonmail.com>
 
-	This program is free software; you can redistribute it and/or modify it under
-	the terms of the GNU General Public License version 2 as published by the
-	Free Software Foundation.
+	This program is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License version 2 as published by
+	the Free Software Foundation.
 
-	This program is distributed in the hope that it will be useful, but WITHOUT ANY
-	WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-	FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful, but WITHOUT
+	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+	more details.
 
-	You should have received a copy of the GNU General Public License along with
-	this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-	Place, Suite 330, Boston, MA 02111-1307 USA
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc., 59
+	Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 */
 
@@ -74,10 +75,18 @@ static void
 draw_dvd_logo(int x, int y, uint32_t color)
 {
 	int cx, cy;
-	for (cy = 0; cy < DVD_LOGO_HEIGHT; ++cy)
-		for (cx = 0; cx < DVD_LOGO_WIDTH; ++cx)
-			tfb_draw_pixel(x + cx, y + cy,
-					colorzlerp(color, dvd_logo_alpha[cy*DVD_LOGO_WIDTH+cx]));
+	for (cy = 0; cy < DVD_LOGO_HEIGHT; ++cy) {
+		for (cx = 0; cx < DVD_LOGO_WIDTH; ++cx) {
+			tfb_draw_pixel(
+				x + cx,
+				y + cy,
+				colorzlerp(
+					color,
+					dvd_logo_alpha[cy*DVD_LOGO_WIDTH+cx]
+				)
+			);
+		}
+	}
 }
 
 static void
@@ -144,7 +153,8 @@ main(int argc, char **argv)
 
 	tfb_clear_screen(0x000000);
 
-	for (;;) {
+	// Make sure true != false.
+	while (true != false) {
 		tfb_draw_rect(x, y, DVD_LOGO_WIDTH, DVD_LOGO_HEIGHT, 0x000000);
 
 		if ((x += xdir) % (w - DVD_LOGO_WIDTH) == 0)
