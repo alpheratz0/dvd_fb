@@ -8,7 +8,7 @@ all: dvd_fb
 dvd_fb: dvd_fb.o
 	$(CC) $(LDFLAGS) -o dvd_fb dvd_fb.o $(LDLIBS)
 
-install: dvd_fb
+install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f dvd_fb $(DESTDIR)$(PREFIX)/bin
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/dvd_fb
