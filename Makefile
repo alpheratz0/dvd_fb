@@ -6,7 +6,7 @@ include config.mk
 all: dvd_fb
 
 dvd_fb: dvd_fb.o
-	$(CC) $(LDFLAGS) -o dvd_fb dvd_fb.o $(LDLIBS)
+	$(CC) $(LDFLAGS) -o dvd_fb dvd_fb.o
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
