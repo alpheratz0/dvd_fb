@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2023 <alpheratz99@protonmail.com>
+	Copyright (C) 2023-2024 <alpheratz99@protonmail.com>
 
 	This program is free software; you can redistribute it and/or modify it
 	under the terms of the GNU General Public License version 2 as published by
@@ -28,21 +28,25 @@
 
 #include "dvd_logo.h"
 
-#define UNITS_PER_SECOND                   (220)
-#define MICROSECONDS_PER_SECOND            (1000*1000)
+#define UnitsPerSecond 220
+#define MicrosecondsPerSecond 1000000
 
-#define red(c) ((c>>16)&0xff)
-#define green(c) ((c>>8)&0xff)
-#define blue(c) ((c>>0)&0xff)
+#define RedChannel(c) ((c >> 16) & 0xff)
+#define GreenChannel(c) ((c >> 8) & 0xff)
+#define BlueChannel(c) (c & 0xff)
 
-#define channellerp(ch,v) ((ch*v)/0xff)
+#define LerpChannel(ch, v) ((ch * v) / 0xff)
+#define MakeColor(r, g, b) ((r << 16) | (g << 8) | b)
 
-#define colorzlerp(c,v) \
-	((channellerp(red(c), v)   << 16) | \
-	 (channellerp(green(c), v) <<  8) | \
-	 (channellerp(blue(c), v)  <<  0))
+#define LerpColor(c, v) \
+	MakeColor( \
+		LerpChannel(RedChannel(c), v), \
+		LerpChannel(GreenChannel(c), v), \
+		LerpChannel(BlueChannel(c), v) \
+	)
 
 static int fb_acquired;
+static uint32_t dvd_logo_colorized[sizeof(dvd_logo_alpha)];
 
 static void
 die(const char *fmt, ...)
@@ -72,19 +76,19 @@ set_signal_handler(int sig, void(*handler)(int))
 }
 
 static void
-draw_dvd_logo(int x, int y, uint32_t color)
+set_dvd_logo_color(uint32_t color)
 {
-	int cx, cy;
-	for (cy = 0; cy < DVD_LOGO_HEIGHT; ++cy) {
-		for (cx = 0; cx < DVD_LOGO_WIDTH; ++cx) {
-			tfb_draw_pixel(
-				x + cx,
-				y + cy,
-				colorzlerp(
-					color,
-					dvd_logo_alpha[cy*DVD_LOGO_WIDTH+cx]
-				)
-			);
+	for (size_t i = 0; i < sizeof(dvd_logo_colorized) / sizeof(dvd_logo_colorized[0]); ++i) {
+		dvd_logo_colorized[i] = LerpColor(color, dvd_logo_alpha[i]);
+	}
+}
+
+static void
+draw_dvd_logo(int x, int y)
+{
+	for (int cy = 0; cy < DVD_LOGO_HEIGHT; ++cy) {
+		for (int cx = 0; cx < DVD_LOGO_WIDTH; ++cx) {
+			tfb_draw_pixel(x + cx, y + cy, dvd_logo_colorized[cy*DVD_LOGO_WIDTH+cx]);
 		}
 	}
 }
@@ -121,7 +125,6 @@ int
 main(int argc, char **argv)
 {
 	int x, y, w, h, xdir, ydir;
-	uint32_t color;
 
 	while (++argv, --argc > 0) {
 		if ((*argv)[0] == '-' && (*argv)[1] != '\0' && (*argv)[2] == '\0') {
@@ -147,7 +150,7 @@ main(int argc, char **argv)
 
 	x = y = 0;
 	xdir = ydir = 1;
-	color = rand();
+	set_dvd_logo_color(rand());
 	w = tfb_screen_width();
 	h = tfb_screen_height();
 
@@ -158,13 +161,13 @@ main(int argc, char **argv)
 		tfb_draw_rect(x, y, DVD_LOGO_WIDTH, DVD_LOGO_HEIGHT, 0x000000);
 
 		if ((x += xdir) % (w - DVD_LOGO_WIDTH) == 0)
-			xdir *= -1, color = rand();
+			xdir *= -1, set_dvd_logo_color(rand());
 
 		if ((y += ydir) % (h - DVD_LOGO_HEIGHT) == 0)
-			ydir *= -1, color = rand();
+			ydir *= -1, set_dvd_logo_color(rand());
 
-		draw_dvd_logo(x, y, color);
-		usleep(MICROSECONDS_PER_SECOND / UNITS_PER_SECOND);
+		draw_dvd_logo(x, y);
+		usleep(MicrosecondsPerSecond / UnitsPerSecond);
 	}
 
 	/* UNREACHABLE */
